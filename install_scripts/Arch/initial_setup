@@ -1,0 +1,105 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------------
+# Copyright (c) 2016, Leonid Bloch
+# All rights reserved.
+# This code is licensed under standard 3-clause BSD license.
+# See file LICENSE supplied with this package for the full license text.
+#------------------------------------------------------------------------------
+
+### Setup the proxy (if behind a proxy)
+#export http_proxy=http://my.proxy.server:port
+#export https_proxy=$http_proxy
+
+### Prepare the drive
+mkfs.btrfs /dev/sda
+mount /dev/sda /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+umount /mnt
+mount -o relatime,compress=lzo,subvol=@ /dev/sda /mnt
+mkdir /mnt/home
+mount -o relatime,compress=lzo,subvol=@home /dev/sda /mnt/home
+
+### Perform basic installation
+pacstrap /mnt base base-devel btrfs-progs grub qemu-guest-agent xorg-xauth openssh tmux git
+genfstab -U /mnt >> /mnt/etc/fstab
+sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen
+echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+echo "FONT=lat9w-16" > /mnt/etc/vconsole.conf
+echo pvm > /mnt/etc/hostname
+echo "127.0.1.1  pvm.localdomain  pvm" >> /mnt/etc/hosts
+sed -i 's/^GRUB_TIMEOUT=[0-9]\+/GRUB_TIMEOUT=0/' /mnt/etc/default/grub
+
+## Setup permanent proxy (if behind a proxy)
+#cat > /mnt/etc/profile.d/proxy.sh <<EOF
+#export http_proxy=http://my.proxy.server:port
+#export https_proxy=\$http_proxy
+#export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+#EOF
+#chmod 755 /mnt/etc/profile.d/proxy.sh
+
+## Internal installation
+arch-chroot /mnt /bin/bash -c "locale-gen"
+arch-chroot /mnt /bin/bash -c "ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime"
+arch-chroot /mnt /bin/bash -c "grub-install --target i386-pc /dev/sda"
+arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
+arch-chroot /mnt /bin/bash -c "systemctl enable dhcpcd"
+echo "Set root password:"
+arch-chroot /mnt /bin/bash -c "passwd"
+arch-chroot /mnt /bin/bash -c "useradd -m -G wheel -s /bin/bash pvm-user"
+echo "Set password for pvm-user:"
+arch-chroot /mnt /bin/bash -c "passwd pvm-user"
+mkdir /mnt/home/pvm-user/{IN,OUT}
+cat >> /mnt/etc/fstab <<EOF
+out /home/pvm-user/OUT 9p rw,trans=virtio,version=9p2000.L,msize=262144,nofail,x-systemd.device-timeout=1 0 0
+
+EOF
+cat > /mnt/usr/local/bin/in_dir_mount <<EOF
+#!/bin/bash
+if [ -e /dev/sdb ]
+then
+    mount -t squashfs -o ro /dev/sdb /home/pvm-user/IN
+else
+    mount -t 9p -o ro,trans=virtio,version=9p2000.L,msize=262144 dat /home/pvm-user/IN
+fi
+EOF
+chmod 755 /mnt/usr/local/bin/in_dir_mount
+cat > /mnt/etc/systemd/system/in_dir_mount.service <<EOF
+[Unit]
+Description="Mount the input data"
+
+[Service]
+ExecStart=/usr/local/bin/in_dir_mount
+
+[Install]
+WantedBy=multi-user.target
+EOF
+cat >> /mnt/etc/sudoers <<EOF
+Defaults env_keep += "http_proxy https_proxy no_proxy"
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/reboot
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/shutdown -h *
+%wheel ALL=(ALL) NOPASSWD: /usr/bin/pacman *
+EOF
+sed -i 's/^#*X11Forwarding [yesno]\+/X11Forwarding yes/' /mnt/etc/ssh/sshd_config
+arch-chroot /mnt /bin/bash -c "systemctl enable sshd.service"
+arch-chroot /mnt /bin/bash -c "systemctl enable qemu-ga.service"
+arch-chroot /mnt /bin/bash -c "systemctl enable in_dir_mount.service"
+cat >> /mnt/etc/bash.bashrc <<EOF
+HISTCONTROL=ignoreboth
+HISTSIZE=1000
+HISTFILESIZE=2000
+EOF
+
+## Copy post-install files
+SCRDIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+cp "${SCRDIR}"/vm_{post,vim}_setup /mnt/usr/local/bin/
+umount -R /mnt
+
+### Finished!
+printf "The basic installation is done.
+You can install additional functionality by running:
+\e[32mvm_post_setup\e[0m (as pvm-user) at a later time.
+Do not forget to turn the installation mode off in the cfg file!\n"
+read -p "Press ENTER to shut down VM..."
+shutdown -h now
