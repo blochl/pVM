@@ -58,7 +58,7 @@ machines, mainly with data processing in mind.
 * `-i`: Specify the input locations (SquashFS images, or directories).
 * `-o`: Specify the output locations (directories).
 * `-m`: Specify the memory per VM. *E.g.*: 4G,8G
-* `-c`: Specify the VCPU cores per VM. *E.g.*: 4,8
+* `-c`: Specify the vCPU cores per VM. *E.g.*: 4,8
 * `-a`: Specify any additional options per VM. *E.g.*: " -snapshot"
 * `--install`: Use when installing a new OS. It will boot the installation media and expose the **install_scripts** directory to the guest (mountable via 9p protocol, with the tag "install").
 * `-h|--help`: Print a short help and exit.
@@ -85,7 +85,7 @@ machines, mainly with data processing in mind.
 * `OUTDIRS`: Array of output data locations. Should be directories. Notice: if there are less output locations than there are VM images, the last one will be used with all the VMs after the VM which will exhaust the list.
 * `MEM`: Array of memory leased to the VMs. If there are more VMs than members of this array, all the VMs after the exhaustion of this array will use the last memory value. For example, if you want all the VMs to run with a single value, just fill in one member.
   * Example: `( 4G 8G 16G )`
-* `CORES`: Array with the numbers of VCPUs. If there are more VMs than members of this array, all the VMs after the exhaustion of this array will use the last number of VCPUs.
+* `CORES`: Array with the numbers of vCPUs. If there are more VMs than members of this array, all the VMs after the exhaustion of this array will use the last number of vCPUs.
   * Example: `( 4 2 1 )`
 * `ADDITIONAL`: Additional arguments. Not usually needed, but at least one empty value (`""`) must be filled. Again, if there are more members than VMs, the last one will be repeated.
 
