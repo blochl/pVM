@@ -3,9 +3,9 @@
 This set of scripts makes it easy to start, run and manage Linux virtual
 machines, mainly with data processing in mind.
 
-### Main characteristics:
+## Main characteristics:
 
-#### Specific:
+### Specific:
 
 * Start several VMs with one command.
 * Quick and easy configuration *via* a configuration file and/or command line parameters.
@@ -15,7 +15,7 @@ machines, mainly with data processing in mind.
 * Support for SquashFS filesystems as the input source - safe (read-only) and efficient (compressed) archiving.
 * Easy to setup central repositories for OS images and data archives - no mess!
 
-#### Why to use VMs for data processing?
+### Why to use VMs for data processing?
 
 * Nearly native performance with KVM, with just a small memory overhead.
 * Ensures repeatability, independent of hardware or the local kernel.
@@ -27,19 +27,21 @@ machines, mainly with data processing in mind.
 
 * Please note: in order to use this setup, the user needs to be a member of the "kvm" group!
 
-### Quick start (NOT for the first usage)
+### Quick start
 
 1. Make sure that the variables in **pVM.cfg** are correct.
 2. Run `./pVM.sh` (or `./pVM.sh [parameters]` - as described below).
 3. Wait for the connection details to appear.
 
-### Command line parameters
+### Details
+
+#### Command line parameters
 
 * In general, the command line parameters just substitute select settings in the **pVM.cfg** file.
 * Therefore, if the setup is static, it is possible not to use any parameters, and just save the settings in the config file.
 * Each flag can receive several comma separated values - one for each VM.
 
-#### Example of parameters' usage
+##### Example of parameters' usage
 
 * Run VMs from `image1.qcow2` and `image2.qcow2`, with data sources `data1.sqsh` and `/path/to/data/`, and a single output directory for both: `/path/to/output`:
 
@@ -49,7 +51,7 @@ machines, mainly with data processing in mind.
   * As you can see, ".qcow2" and ".sqsh" extensions can be omitted for QCOW2 and SquashFS files, respectively.
   * No path needs to be specified if the VM or the data images are in the locations which are configured in the .cfg file.
 
-#### Complete list of parameters:
+##### Complete list of parameters:
 
 * All the parameters are optional. The values from the config file will be used by default.
 * `-d`: Specify the VM images to use.
@@ -61,16 +63,16 @@ machines, mainly with data processing in mind.
 * `--install`: Use when installing a new OS. It will boot the installation media and expose the **install_scripts** directory to the guest (mountable via 9p protocol, with the tag "install").
 * `-h|--help`: Print a short help and exit.
 
-### Options in **pVM.cfg** explained
+#### Options in **pVM.cfg** explained
 
-#### General options:
+##### General options:
 
 * `DRIVEREPO`: The location where the VM images reside.
 * `SQUASHREPO`: The location where the SquashFS images reside.
 * `QEMU_BIN`: The path to QEMU binary. The latest is recommended! It can be easily compiled locally!
 * `NET_TYPE`: Accepts "user" or "tap". *User* network has worse performance than *tap* network, yet usually you would use *user* network only, since *tap* network requires running the script as root (or via sudo). This is only useful for testing, where high network performance is required, and the user has root access on the host.
 
-#### Per-VM configurations:
+##### Per-VM configurations:
 
 * `DRIVES`: Array of the VM images. Its size determines the amount of VMs that will be launched. If the image is in the `DRIVEREPO` location, no path is needed. Also, no ".qcow2" extension is needed for QCOW2 images.
   * The following examples are equivalent:
@@ -82,16 +84,16 @@ machines, mainly with data processing in mind.
   2. `( data1 data2 )`
 * `OUTDIRS`: Array of output data locations. Should be directories. Notice: if there are less output locations than there are VM images, the last one will be used with all the VMs after the VM which will exhaust the list.
 * `MEM`: Array of memory leased to the VMs. If there are more VMs than members of this array, all the VMs after the exhaustion of this array will use the last memory value. For example, if you want all the VMs to run with a single value, just fill in one member.
-  * Example: `( 3G 2G 512M )`
+  * Example: `( 4G 8G 16G )`
 * `CORES`: Array with the numbers of VCPUs. If there are more VMs than members of this array, all the VMs after the exhaustion of this array will use the last number of VCPUs.
   * Example: `( 4 2 1 )`
 * `ADDITIONAL`: Additional arguments. Not usually needed, but at least one empty value (`""`) must be filled. Again, if there are more members than VMs, the last one will be repeated.
 
-#### User net settings:
+##### User net settings:
 
 * `INIT_SSH_PORT`: The port through which it will be possible to SSH to the first VM in user mode. They increment by one for each following VM.
 
-#### Tap net settings:
+##### Tap net settings:
 
 * `VM_BRIDGE`: Name of the bridge to which the VMs should connect.
 * `BR_ADDR`: The address and netmask that will be given to the bridge above.
@@ -99,11 +101,11 @@ machines, mainly with data processing in mind.
 * `LEASE_RANGE`: Range of IPs that the DHCP will lease to the VMS on the bridge above.
   * Example: "10.0.0.2,10.0.0.30"
 
-#### New installation settings:
+##### New installation settings:
 * `INSTALLING`: "true" or "false". Whether we are performing a new OS installation now. When *true*, the installation media will be inserted, and the **install_scripts** directory will be exposed to the guest (mountable via 9p protocol, with the tag "install").
 * `INSTALL_MEDIA`: The path to the installation media, *e.g.* ISO image.
 
-### Check list for the first usage
+## Check list for the first usage
 
 1. **(Optional)** Download and compile QEMU. You can use the system installed version, but using the latest is recommended. Note: some distributions, like Arch Linux, already provide the latest QEMU in their repositories, so no compilation is needed.
 
@@ -152,8 +154,9 @@ machines, mainly with data processing in mind.
         ```sh
         mksquashfs /path/to/data/dir /path/to/SQUASHREPO/data1.sqsh
         ```
+      * Try following the above with `-lz4` for ultra-fast compression. Check other compression options as well, by typing `mksquashfs --help`.
 
-### Usage with tap network
+## Usage with tap network
 
 TAP networking requires root privileges to run. Therefore it is not intended for
 "regular" usage, unless a high performance, low-overhead, networking is required,
@@ -165,8 +168,8 @@ several preparations on the host are required:
 If external network is to be accessed from the VMs, also do the following:
 
 1. The physical network adapter should be connected to an OpenVswith bridge (a different one than the bridge for the VMS). A simple Linux bridge will work as well, but OpenVswitch is recommended for the possible scalability/flexibility of the setup.
-2. Packet forwarding should be enabled.
-3. Proper firewall rules should be set to allow masquerading and forwarding, so that the internal bridge created during runtime for the VMs (*ovs-br1* by default) will be able to connect to the outside world through the bridge that the physical adapter is connected to.
+1. Packet forwarding should be enabled.
+1. Proper firewall rules should be set to allow masquerading and forwarding, so that the internal bridge created during runtime for the VMs (*ovs-br1* by default) will be able to connect to the outside world through the bridge that the physical adapter is connected to.
 * Of course, on a system that spans over several servers, more advanced options can be used, such as GRE tunnels, etc...
 
 ## Licensing
