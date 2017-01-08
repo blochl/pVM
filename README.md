@@ -23,6 +23,12 @@ machines, mainly with data processing in mind.
 * The VM images can be separate snapshots of some main image - common base for everyone, while saving on storage space, and ensuring per-user consistency. A user may save a ~100 MB image, and come back after a year to the exact same computing environment that she left, with personal modifications, packages, scripts, etc...
 * Possibility to use the latest and possibly experimental software, which is not stable enough for the physical servers.
 
+## Demo videos
+
+[▶ New VM installation](https://www.youtube.com/watch?v=LsPO3XtgbNQ) | [▶ Benchmarking against the host](https://www.youtube.com/watch?v=NRMyI5FfJRw)
+--- | ---
+[![New VM installation demo](https://img.youtube.com/vi/LsPO3XtgbNQ/mqdefault.jpg)](https://www.youtube.com/watch?v=LsPO3XtgbNQ "New VM installation demo") | [![Benchmarking against the host demo](https://img.youtube.com/vi/NRMyI5FfJRw/mqdefault.jpg)](https://www.youtube.com/watch?v=NRMyI5FfJRw "Benchmarking against the host demo")
+
 ## Usage
 
 * Please note: in order to use this setup, the user needs to be a member of the "kvm" group!
