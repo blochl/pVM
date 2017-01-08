@@ -374,6 +374,7 @@ do
         -rtc-td-hack \
         -global kvm-pit.lost_tick_policy=discard \
         -rtc base=utc,clock=host,driftfix=slew \
+        -balloon virtio \
         -name "$(name_from_drive ${DRIVES[$i]} $i)" \
         -spice port=$SPICE_PORT,disable-ticketing \
         -vga qxl \
