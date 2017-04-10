@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 
 GEOMETRY=110x70  # Geometry of the opened ET window
-FONTDIR=${HOME}/.fonts
+FONTDIR=${HOME}/.local/share/fonts
 VIMRC=${HOME}/.vimrc
 ETCOMM=$(printf 'et() { (gvim -u %s -geometry %s "$@" &) }' "${VIMRC}" $GEOMETRY)
 
