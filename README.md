@@ -129,7 +129,7 @@ machines, mainly with data processing in mind.
     ```
 1. Define the QEMU binary location in **pVM.cfg**. Define the installation media location there as well.
 1. Create directories for VM images and data SquashFS images, and define them in **pVM.cfg**.
-  * Note: if your VM image repository resides on a BTRFS filesystem, COW must be disabled on that directory, and the compression, preferably, forced:
+    * Note: if your VM image repository resides on a BTRFS filesystem, COW must be disabled on that directory, and the compression, preferably, forced:
 
         ```sh
         chattr +C +c /path/to/DRIVEREPO
@@ -139,9 +139,9 @@ machines, mainly with data processing in mind.
     ```sh
     qemu-img create -f qcow2 /path/to/DRIVEDIR/image_fresh.qcow2 15G
     ```
-  * In this example, `DRIVEDIR` is the location for VM images that was created previously.
-  * The image will be about 200 KB in size. It will grow as needed, up to the limit of 15 GB (in this example).
-  * You probably want to create just a single image at this stage. If you want to use more, you can make snapshots (details later).
+    * In this example, `DRIVEDIR` is the location for VM images that was created previously.
+    * The image will be about 200 KB in size. It will grow as needed, up to the limit of 15 GB (in this example).
+    * You probably want to create just a single image at this stage. If you want to use more, you can make snapshots (details later).
 1. If needed for future use, define the image in the `DRIVES` array in **pVM.cfg**.
 1. Run `./pVM.sh -d image_fresh --install`.
 1. Perform the installation, as described in the distribution-specific README under **install_scripts**.
@@ -152,10 +152,10 @@ machines, mainly with data processing in mind.
     qemu-img create -f qcow2 -b image_fresh.qcow2 image1.qcow2
     qemu-img create -f qcow2 -b image_fresh.qcow2 image2.qcow2
     ```
-  * Notice: once the snapshots are created, do NOT change the backing image (nor boot it)!!!
+    * Notice: once the snapshots are created, do NOT change the backing image (nor boot it)!!!
 1. THAT'S IT! Now you can squash your data and get to business!
-  * Although the data location can also be a directory, squashing is recommended because it will archive the data in a compressed and read-only form, saving a lot of space, protecting from accidental corruption, and increasing the performance if the data is highly compressible.
-  * To squash (to the `SQUASHREPO` location created earlier) do:
+    * Although the data location can also be a directory, squashing is recommended because it will archive the data in a compressed and read-only form, saving a lot of space, protecting from accidental corruption, and increasing the performance if the data is highly compressible.
+    * To squash (to the `SQUASHREPO` location created earlier) do:
 
         ```sh
         mksquashfs /path/to/data/dir /path/to/SQUASHREPO/data1.sqsh
