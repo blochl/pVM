@@ -24,7 +24,7 @@
     ```sh
     ./install/Arch/initial_setup
     ```
-  * You will be asked to set the root and user passwords during the installation.
+    * You will be asked to set the root and user passwords during the installation.
 1. The machine will shut down.
 1. Start the VM: `./pVM.sh -d Arch_fresh`
 1. Now you can connect as *pvm-user* via SSH (the connection command will be shown) and run the post-installation script:
@@ -32,7 +32,7 @@
     ```sh
     vm_post_setup
     ```
-  * At this stage the installation is complete. You can make snapshots of this image, and use them, while keeping the clean installation pristine.
+    * At this stage the installation is complete. You can make snapshots of this image, and use them, while keeping the clean installation pristine.
 
 ## Points to note
 
