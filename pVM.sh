@@ -369,7 +369,8 @@ do
         -smp ${CORES[$i]},cores=${CORES[$i]} \
         -enable-kvm \
         -cpu qemu64,+ssse3,+sse4.1,+sse4.2,+x2apic,+fsgsbase,model=26 \
-        -usbdevice tablet \
+        -usb \
+        -device usb-tablet \
         -boot order=cd \
         -rtc-td-hack \
         -global kvm-pit.lost_tick_policy=discard \
