@@ -29,6 +29,12 @@ machines, mainly with data processing in mind.
 --- | ---
 [![New VM installation demo](https://img.youtube.com/vi/LsPO3XtgbNQ/mqdefault.jpg)](https://www.youtube.com/watch?v=LsPO3XtgbNQ "New VM installation demo") | [![Benchmarking against the host demo](https://img.youtube.com/vi/NRMyI5FfJRw/mqdefault.jpg)](https://www.youtube.com/watch?v=NRMyI5FfJRw "Benchmarking against the host demo")
 
+## Prerequisites
+
+Some prerequisites need to be installed for full functionality:
+* SPICE-server, SPICE-client, and SPICE-protocol (`libspice-server-dev`, `spice-client-gtk`, and `libspice-protocol-dev` on Ubuntu/Debian).
+* libcap and libattr (`libcap-dev` and `libattr1-dev` on Ubuntu/Debian).
+
 ## Usage
 
 * Please note: in order to use this setup, the user needs to be a member of the "kvm" group!
