@@ -8,7 +8,9 @@
 #------------------------------------------------------------------------------
 
 # Install additional packages (add and remove as needed)
-sudo pacman -Syu --needed bash-completion rsync xorg-server-utils \
+sudo pacman -Syu --needed bash-completion rsync xorg-iceauth xorg-sessreg \
+    xorg-xcmsdb xorg-xbacklight xorg-xgamma xorg-xhost xorg-xinput \
+    xorg-xmodmap xorg-xrandr xorg-xrdb xorg-xrefresh xorg-xset xorg-xsetroot \
     xorg-mkfontdir xorg-mkfontscale xf86-input-libinput gvim htop libx264 \
     the_silver_searcher imagemagick gnuplot hunspell hunspell-en ffmpeg unzip \
     mesa-libgl python-opengl sshfs zip python{,2}-lxml perl-net-smtp-ssl \
