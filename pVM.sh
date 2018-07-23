@@ -372,10 +372,9 @@ do
         -usb \
         -device usb-tablet \
         -boot order=cd \
-        -rtc-td-hack \
         -global kvm-pit.lost_tick_policy=discard \
         -rtc base=utc,clock=host,driftfix=slew \
-        -balloon virtio \
+        -device virtio-balloon \
         -name "$(name_from_drive ${DRIVES[$i]} $i)" \
         -spice port=$SPICE_PORT,disable-ticketing \
         -vga qxl \
