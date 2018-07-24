@@ -183,7 +183,7 @@ drivedir_cmd() {
 set_qcow2_l2_cache() {
     local L2_DEFAULT_CLUSTERS=8
     local L2_DEFAULT_SIZE=1048576
-    # Info: http://git.qemu.org/?p=qemu.git;a=blob;f=docs/specs/qcow2.txt
+    # Info: http://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
     set $(od -N 32 --endian=big -An -x $1 2> /dev/null | tr -d " ")
     local MAG_VER=$(cut -c 1-16 <<< $1)
     case $MAG_VER in
