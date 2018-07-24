@@ -165,7 +165,7 @@ drivedir_cmd() {
 }
 
 #set_qcow2_l2_cache() {
-#    local L2_DEFAULT_CLUSTERS=8
+#    local L2_BYTES=8
 #    local L2_DEFAULT_SIZE=1048576
 #    # Format, virtual size, cluster size:
 #    set $(${QEMU_IMG_BIN} info $1 |
@@ -175,13 +175,13 @@ drivedir_cmd() {
 #    if [ "$1" = qcow2 ]
 #    then
 #        # size*cache_clusters/cluster_size, but divisible by cluster_size:
-#        local L2SIZE=$(( $2 * $L2_DEFAULT_CLUSTERS / $3**2 * $3 ))
+#        local L2SIZE=$(( $2 * $L2_BYTES / $3**2 * $3 ))
 #        # Apply only if not smaller than the default
 #        [ $L2SIZE -gt $L2_DEFAULT_SIZE ] && printf ",l2-cache-size=%s" $L2SIZE
 #    fi
 #}
 set_qcow2_l2_cache() {
-    local L2_DEFAULT_CLUSTERS=8
+    local L2_BYTES=8
     local L2_DEFAULT_SIZE=1048576
     # Info: http://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
     set $(od -N 32 --endian=big -An -x $1 2> /dev/null | tr -d " ")
@@ -194,7 +194,7 @@ set_qcow2_l2_cache() {
         local DRIVESIZE=$(cut -c 17-32 <<< $2)
         # size*cache_clusters/cluster_size, but divisible by cluster_size:
         # Info: http://git.qemu.org/?p=qemu.git;a=blob;f=docs/qcow2-cache.txt
-        local L2SIZE=$(( 0x$DRIVESIZE * $L2_DEFAULT_CLUSTERS /
+        local L2SIZE=$(( 0x$DRIVESIZE * $L2_BYTES /
                          $CLUSTERSIZE**2 * $CLUSTERSIZE ))
         # Apply only if not smaller than the default
         [ $L2SIZE -gt $L2_DEFAULT_SIZE ] && printf ",l2-cache-size=%s" $L2SIZE
