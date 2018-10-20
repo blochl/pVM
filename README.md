@@ -127,7 +127,7 @@ Some prerequisites need to be installed for full functionality:
     cd ~/Builds
     git clone git://git.qemu-project.org/qemu.git
     cd qemu
-    ./configure --target-list=x86_64-softmmu --disable-docs --prefix=${HOME}/local
+    ./configure --target-list=x86_64-softmmu --disable-docs --prefix=~/local
     # Make sure that the fields after "spice support" and "ATTR/XATTR support" say "yes".
     make -j$(nproc)
     make install
