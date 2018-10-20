@@ -7,7 +7,7 @@
 # See file LICENSE supplied with this package for the full license text.
 #------------------------------------------------------------------------------
 
-SCRDIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
+SCRDIR="$(cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd)"
 . "${SCRDIR}"/pVM.cfg
 
 while [ $# -gt 0 ]
