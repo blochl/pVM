@@ -171,14 +171,40 @@ Some prerequisites need to be installed for full functionality:
 
 TAP networking requires root privileges to run. Therefore it is not intended for
 "regular" usage, unless a high performance, low-overhead, networking is required,
-and if the user has root access on the host server. To use the tap networking,
-several preparations on the host are required:
+and if the user has root access on the host server.
 
-1. **openvswitch** and **dnsmasq** packages installed.
+To use the tap networking, several preparations on the host are required:
+
+1. Install the **openvswitch** and **dnsmasq** packages.
+1. The **ovsdb-server** service should be running:
+    ```sh
+    sudo systemctl start ovsdb-server
+    sudo systemctl enable ovsdb-server
+    ```
+1. The **ovs-vswitchd** service should be running.
+    ```sh
+    sudo systemctl start ovs-vswitchd
+    sudo systemctl enable ovs-vswitchd
+    ```
+1. Set the interface name in dnsmasq configurations:
+    ```sh
+    sudo sed -i 's/^#*interface=.*/interface=ovs-br1/' /etc/dnsmasq.conf
+    ```
+    * `ovs-br1` is the default bridge name, it can be changed (consistently) if desired.
+1. Set the IP range in dnsmasq configurations:
+    ```sh
+    sudo sed -i 's/^#*dhcp-range=[0-9.]\+,[0-9.]\+,[0-9]\+h/dhcp-range=10.0.0.2,10.0.0.30,12h/' /etc/dnsmasq.conf
+    ```
+    * `10.0.0.2,10.0.0.30` is the default range, you can use a different one, if desired.
+1. The **dnsmasq** service should be running.
+    ```sh
+    sudo systemctl start dnsmasq
+    sudo systemctl enable dnsmasq
+    ```
 
 If external network is to be accessed from the VMs, also do the following:
 
-1. The physical network adapter should be connected to an OpenVswith bridge (a different one than the bridge for the VMS). A simple Linux bridge will work as well, but OpenVswitch is recommended for the possible scalability/flexibility of the setup.
+1. The physical network adapter should be connected to an OpenVswith bridge (a different one than the bridge for the VMS).
 1. Packet forwarding should be enabled.
 1. Proper firewall rules should be set to allow masquerading and forwarding, so that the internal bridge created during runtime for the VMs (*ovs-br1* by default) will be able to connect to the outside world through the bridge that the physical adapter is connected to.
 * Of course, on a system that spans over several servers, more advanced options can be used, such as GRE tunnels, etc...
