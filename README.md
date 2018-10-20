@@ -162,11 +162,10 @@ Some prerequisites need to be installed for full functionality:
 1. THAT'S IT! Now you can squash your data and get to business!
     * Although the data location can also be a directory, squashing is recommended because it will archive the data in a compressed and read-only form, saving a lot of space, protecting from accidental corruption, and increasing the performance if the data is highly compressible.
     * To squash (to the `SQUASHREPO` location created earlier) do:
-
         ```sh
         mksquashfs /path/to/data/dir /path/to/SQUASHREPO/data1.sqsh
         ```
-      * Try following the above with `-lz4` for ultra-fast compression. Check other compression options as well, by typing `mksquashfs --help`.
+        * Try following the above with `-lz4` for ultra-fast compression. Check other compression options as well, by typing `mksquashfs --help`.
 
 ## Usage with tap network
 
