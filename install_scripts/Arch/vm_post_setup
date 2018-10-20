@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 #------------------------------------------------------------------------------
 # Copyright (c) 2016, Leonid Bloch
 # All rights reserved.
