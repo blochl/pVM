@@ -43,6 +43,7 @@ sed -i 's/^GRUB_TIMEOUT=[0-9]\+/GRUB_TIMEOUT=0/' /mnt/etc/default/grub
 
 ## Internal installation
 arch-chroot /mnt /bin/bash -c "locale-gen"
+arch-chroot /mnt /bin/bash -c "rm -f /etc/localtime"
 arch-chroot /mnt /bin/bash -c "ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime"
 arch-chroot /mnt /bin/bash -c "grub-install --target i386-pc /dev/sda"
 arch-chroot /mnt /bin/bash -c "grub-mkconfig -o /boot/grub/grub.cfg"
