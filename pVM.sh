@@ -71,6 +71,11 @@ case ${NET_TYPE} in
         exit 1
 esac
 
+case ${NET_TYPE} in
+    tap)
+        VHOST_STATE=",vhost=on"
+esac
+
 CURR_USER=${SUDO_USER:-${USER}}
 SSH_LOCAL=$(awk '{ print $3 ":" $4 }' <<< ${SSH_CONNECTION})
 
@@ -234,6 +239,13 @@ usr_ssh_fwd() {
     esac
 }
 
+get_queues() {
+    case ${NET_TYPE} in
+        tap)
+            printf ",queues=%s" ${1}
+    esac
+}
+
 find_tapnet_ip() {
     printf "%s" $(ip neigh | awk -v mac="$(getmac $1)" '$5 == mac { print $1 }')
 }
@@ -366,8 +378,8 @@ do
         $(drivedir_cmd dat $i ro "${INDRIVES[$i]}") \
         $(drivedir_cmd out $i rw "${OUTDIRS[$i]}") \
         ${INST_DRIVE} \
-        -netdev ${NET_TYPE},id=hostnet$(zerolead $i),vhost=on$(use_net_scripts),ifname=netif$(zerolead $i)$(usr_ssh_fwd $i),queues=${CORES[$i]} \
-        -device virtio-net-pci,netdev=hostnet$(zerolead $i),mac=$(getmac $i),mq=on,vectors=$(calcvec ${CORES[$i]}),id=netif$(zerolead $i) \
+        -netdev ${NET_TYPE},id=hostnet$(zerolead $i)${VHOST_STATE}$(use_net_scripts)$(usr_ssh_fwd $i)$(get_queues ${CORES[$i]}) \
+        -device virtio-net-pci,netdev=hostnet$(zerolead $i),mac=$(getmac $i),mq=on,vectors=$(calcvec ${CORES[$i]}) \
         -m "${MEM[$i]}" \
         -smp ${CORES[$i]},cores=${CORES[$i]} \
         -enable-kvm \
