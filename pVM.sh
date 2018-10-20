@@ -52,15 +52,15 @@ EOF
     shift
 done
 
-case $NET_TYPE in
+case ${NET_TYPE} in
     tap)
-        case $USER in
-        root)
-            echo "Running with tap network."
-            ;;
-        *)
-            echo "Error: tap network can be run with root privileges only!"
-            exit 1
+        case ${USER} in
+            root)
+                echo "Running with tap network."
+                ;;
+            *)
+                echo "Error: tap network can be run with root privileges only!"
+                exit 1
         esac
         ;;
     user)
@@ -121,13 +121,13 @@ remove_bridge() {
 }
 
 create_bridge_scripts() {
-cat > "${SCRDIR}"/upscript.sh <<EOF
+    cat > "${SCRDIR}"/upscript.sh <<EOF
 #!/bin/sh
 ip link set \$1 up
 ovs-vsctl add-port ${VM_BRIDGE} \$1
 EOF
-chmod 755 "${SCRDIR}"/upscript.sh
-chown ${CURR_USER}:$(id -g -n ${CURR_USER}) "${SCRDIR}"/upscript.sh
+    chmod 755 "${SCRDIR}"/upscript.sh
+    chown ${CURR_USER}:$(id -g -n ${CURR_USER}) "${SCRDIR}"/upscript.sh
 }
 
 remove_bridge_scripts() {
@@ -156,11 +156,11 @@ drivedir_cmd() {
         local ID="$1dir$(zerolead $2)"
         local TAG="$1"
         case $3 in
-        ro)
-            local LOCRO=",readonly"
+            ro)
+                local LOCRO=",readonly"
         esac
         printf -- "-virtfs local,id=%s,path=%s,security_model=none,mount_tag=%s%s" \
-                  $ID $4 $TAG $LOCRO
+                  ${ID} $4 ${TAG} ${LOCRO}
     fi
 }
 
@@ -175,29 +175,32 @@ drivedir_cmd() {
 #    if [ "$1" = qcow2 ]
 #    then
 #        # size*cache_clusters/cluster_size, but divisible by cluster_size:
-#        local L2SIZE=$(( $2 * $L2_BYTES / $3**2 * $3 ))
+#        local L2SIZE=$(( $2 * ${L2_BYTES} / $3**2 * $3 ))
 #        # Apply only if not smaller than the default
-#        [ $L2SIZE -gt $L2_DEFAULT_SIZE ] && printf ",l2-cache-size=%s" $L2SIZE
+#        [ ${L2SIZE} -gt ${L2_DEFAULT_SIZE} ] &&
+#            printf ",l2-cache-size=%s" ${L2SIZE}
 #    fi
 #}
+
 set_qcow2_l2_cache() {
     local L2_BYTES=8
     local L2_DEFAULT_SIZE=1048576
     # Info: http://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
     set $(od -N 32 --endian=big -An -x $1 2> /dev/null | tr -d " ")
     local MAG_VER=$(cut -c 1-16 <<< $1)
-    case $MAG_VER in
+    case ${MAG_VER} in
     514649fb0000000[2-3])
         # File is qcow2
         local CLUSTERBITS=$(cut -c 9-16 <<< $2)
-        local CLUSTERSIZE=$(( 1 << 0x$CLUSTERBITS ))
+        local CLUSTERSIZE=$(( 1 << 0x${CLUSTERBITS} ))
         local DRIVESIZE=$(cut -c 17-32 <<< $2)
         # size*cache_clusters/cluster_size, but divisible by cluster_size:
         # Info: http://git.qemu.org/?p=qemu.git;a=blob;f=docs/qcow2-cache.txt
-        local L2SIZE=$(( 0x$DRIVESIZE * $L2_BYTES /
-                         $CLUSTERSIZE**2 * $CLUSTERSIZE ))
+        local L2SIZE=$(( 0x${DRIVESIZE} * ${L2_BYTES} /
+                         ${CLUSTERSIZE}**2 * ${CLUSTERSIZE} ))
         # Apply only if not smaller than the default
-        [ $L2SIZE -gt $L2_DEFAULT_SIZE ] && printf ",l2-cache-size=%s" $L2SIZE
+        [ ${L2SIZE} -gt ${L2_DEFAULT_SIZE} ] &&
+            printf ",l2-cache-size=%s" ${L2SIZE}
     esac
 }
 
@@ -225,9 +228,9 @@ find_drive() {
 }
 
 usr_ssh_fwd() {
-    case $NET_TYPE in
-    user)
-        printf ",hostfwd=tcp::%s-:22" $(( $INIT_SSH_PORT + $1 ))
+    case ${NET_TYPE} in
+        user)
+            printf ",hostfwd=tcp::%s-:22" $(( $INIT_SSH_PORT + $1 ))
     esac
 }
 
@@ -236,27 +239,27 @@ find_tapnet_ip() {
 }
 
 ssh_print() {
-    case $NET_TYPE in
-    user)
-        printf -- "-p %s pvm-user@localhost\n" $(( $INIT_SSH_PORT + $1 ))
-        ;;
-    tap)
-        local TAPNET_IP=$(find_tapnet_ip $1)
-        printf -- "pvm-user@%s\n" ${TAPNET_IP:-"<GUEST> (not online yet...)"}
+    case ${NET_TYPE} in
+        user)
+            printf -- "-p %s pvm-user@localhost\n" $(( $INIT_SSH_PORT + $1 ))
+            ;;
+        tap)
+            local TAPNET_IP=$(find_tapnet_ip $1)
+            printf -- "pvm-user@%s\n" ${TAPNET_IP:-"<GUEST> (not online yet...)"}
     esac
 }
 
 use_net_scripts() {
-    case $NET_TYPE in
-    tap)
-        printf ",script=%s/upscript.sh,downscript=no" "${SCRDIR}"
+    case ${NET_TYPE} in
+        tap)
+            printf ",script=%s/upscript.sh,downscript=no" "${SCRDIR}"
     esac
 }
 
 set_runas() {
-    case $USER in
-    root)
-        [ "${CURR_USER}" = root ] || printf -- "-runas %s" ${CURR_USER}
+    case ${USER} in
+        root)
+            [ "${CURR_USER}" = root ] || printf -- "-runas %s" ${CURR_USER}
     esac
 }
 
@@ -271,25 +274,25 @@ complete_arr() {
 }
 
 prepare_net() {
-    case $NET_TYPE in
-    tap)
-        create_bridge
-        start_dnsmasq
-        create_bridge_scripts
+    case ${NET_TYPE} in
+        tap)
+            create_bridge
+            start_dnsmasq
+            create_bridge_scripts
     esac
 }
 
 end_net() {
-    case $NET_TYPE in
-    tap)
-        stop_dnsmasq
-        remove_bridge
-        remove_bridge_scripts
+    case ${NET_TYPE} in
+        tap)
+            stop_dnsmasq
+            remove_bridge
+            remove_bridge_scripts
     esac
 }
 
 NUMDRIVES=${#DRIVES[@]}
-if [ $NUMDRIVES -eq 0 ] || [ ${#MEM[@]} -eq 0 ] || [ ${#CORES[@]} -eq 0 ]
+if [ ${NUMDRIVES} -eq 0 ] || [ ${#MEM[@]} -eq 0 ] || [ ${#CORES[@]} -eq 0 ]
 then
     echo "Please make sure that bootdrives/memory/CPUs are specified!"
     exit 1
@@ -332,24 +335,24 @@ do
     fi
 done
 
-complete_arr $NUMDRIVES INDRIVES[@]
-complete_arr $NUMDRIVES OUTDIRS[@]
-complete_arr $NUMDRIVES MEM[@]
-complete_arr $NUMDRIVES CORES[@]
-complete_arr $NUMDRIVES ADDITIONAL[@]
+complete_arr ${NUMDRIVES} INDRIVES[@]
+complete_arr ${NUMDRIVES} OUTDIRS[@]
+complete_arr ${NUMDRIVES} MEM[@]
+complete_arr ${NUMDRIVES} CORES[@]
+complete_arr ${NUMDRIVES} ADDITIONAL[@]
 
 PIDS=()
 trap "kill_machines ${PIDS[@]}; end_net; exit 0" INT
 
 prepare_net
 
-[ "$INSTALLING" = true ] && printf "=== INSTALLATION MODE ===\n"
-[ "$SSH_LOCAL" = ":" ] || printf "Connected remotely (%s)\n" "$SSH_LOCAL"
+[ "${INSTALLING}" = true ] && printf "=== INSTALLATION MODE ===\n"
+[ "${SSH_LOCAL}" = ":" ] || printf "Connected remotely (%s)\n" "${SSH_LOCAL}"
 for i in ${!DRIVES[@]}
 do
     SPICE_PORT=$(( 6000 + $i ))
     MON_PORT=$(( 10000 + $i ))
-    if [ $INSTALLING = true ]
+    if [ "${INSTALLING}" = true ]
     then
         ADDITIONAL[$i]+=" -cdrom ${INSTALL_MEDIA}"
         INST_DRIVE=$(drivedir_cmd install $i ro "${SCRDIR}"/install_scripts)
@@ -365,7 +368,7 @@ do
         ${INST_DRIVE} \
         -netdev ${NET_TYPE},id=hostnet$(zerolead $i),vhost=on$(use_net_scripts),ifname=netif$(zerolead $i)$(usr_ssh_fwd $i),queues=${CORES[$i]} \
         -device virtio-net-pci,netdev=hostnet$(zerolead $i),mac=$(getmac $i),mq=on,vectors=$(calcvec ${CORES[$i]}),id=netif$(zerolead $i) \
-        -m ${MEM[$i]} \
+        -m "${MEM[$i]}" \
         -smp ${CORES[$i]},cores=${CORES[$i]} \
         -enable-kvm \
         -cpu qemu64,+ssse3,+sse4.1,+sse4.2,+x2apic,+fsgsbase,model=26 \
@@ -376,10 +379,10 @@ do
         -rtc base=utc,clock=host,driftfix=slew \
         -device virtio-balloon \
         -name "$(name_from_drive ${DRIVES[$i]} $i)" \
-        -spice port=$SPICE_PORT,disable-ticketing \
+        -spice port=${SPICE_PORT},disable-ticketing \
         -vga qxl \
         -global qxl-vga.revision=4 \
-        -monitor telnet::$MON_PORT,server,nowait ${ADDITIONAL[$i]} &
+        -monitor telnet::${MON_PORT},server,nowait ${ADDITIONAL[$i]} &
 
     PIDS+=($!)
 
@@ -389,8 +392,9 @@ do
         sleep 7
         printf "=== VM %02d ===\nGraphics: %s\nMonitor: %s\n" \
                $(( $i + 1 )) \
-               "spicy -h localhost -p $SPICE_PORT" "telnet localhost $MON_PORT"
-        [ "$INSTALLING" = true ] || printf "SSH: %s\n" "ssh $(ssh_print $i)"
+               "spicy -h localhost -p ${SPICE_PORT}" \
+               "telnet localhost ${MON_PORT}"
+        [ "${INSTALLING}" = true ] || printf "SSH: %s\n" "ssh $(ssh_print $i)"
     else
         printf "VM %02d: FAILED!\n" $(( $i + 1 ))
     fi
