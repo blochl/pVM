@@ -85,7 +85,7 @@ Defaults env_keep += "http_proxy https_proxy no_proxy"
 %wheel ALL=(ALL) NOPASSWD: /usr/bin/pacman *
 EOF
 sed -i 's/^#*X11Forwarding [yesno]\+/X11Forwarding yes/' /mnt/etc/ssh/sshd_config
-arch-chroot /mnt /bin/bash -c "systemctl enable sshd.service"
+arch-chroot /mnt /bin/bash -c "systemctl enable sshd.socket"
 arch-chroot /mnt /bin/bash -c "systemctl enable haveged.service"
 arch-chroot /mnt /bin/bash -c "systemctl enable qemu-ga.service"
 arch-chroot /mnt /bin/bash -c "systemctl enable in_dir_mount.service"
