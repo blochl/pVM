@@ -15,10 +15,10 @@ sudo pacman -Syu --needed bash-completion rsync xorg-iceauth xorg-sessreg \
     xorg-xmodmap xorg-xrandr xorg-xrdb xorg-xrefresh xorg-xset xorg-xsetroot \
     xorg-mkfontdir xorg-mkfontscale xf86-input-libinput gvim htop libx264 \
     the_silver_searcher imagemagick gnuplot hunspell hunspell-en_US ffmpeg \
-    unzip mesa-libgl python-opengl sshfs zip python{,2}-lxml \
-    perl-net-smtp-ssl  perl-authen-sasl perl-mime-tools python{,2}-pip \
-    python{,2}-numpy python{,2}-scipy python{,2}-sympy python{,2}-h5py \
-    python{,2}-matplotlib python{,2}-pillow openmpi
+    unzip mesa-libgl python-opengl sshfs zip python-lxml \
+    perl-net-smtp-ssl  perl-authen-sasl perl-mime-tools python-pip \
+    python-numpy python-scipy python-sympy python-h5py \
+    python-matplotlib python-pillow openmpi
 
 # Vim settings
 vm_vim_setup
