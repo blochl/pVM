@@ -67,7 +67,7 @@ Let's stay in the same directory we `cd`ed to at the **Download** step.
     ```sh
     ./pVM.sh -d Arch_fresh --install
     ```
-1. Connect through *spice* - the "screen" of your virtual computer (the connection command will be shown):
+1. From a different terminal, connect through *spice* - the "screen" of your virtual computer (the connection command will be shown):
     ```sh
     spicy -h localhost -p 6000
     ```
