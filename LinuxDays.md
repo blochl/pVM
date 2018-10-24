@@ -99,7 +99,7 @@ Let's stay in the same directory we `cd`ed to at the **Download** step.
     ```
 1. At this stage the installation is complete. You can make snapshots of this image, and use them, while keeping the clean installation pristine. To make a snapshot you must turn off the VM (`sudo shutdown -h now` **in the VM terminal**) and do the following:
     ```sh
-    qemu-img create -f qcow2 -b images/Arch_fresh.qcow2 images/Arch_snap.qcow2
+    qemu-img create -f qcow2 -b Arch_fresh.qcow2 images/Arch_snap.qcow2
     ```
     * Once you have the snapshot, **never** boot the pristine image again, otherwise the snapshot will not work. You can obviously use the pristine image to make more snapshots though.
     * To start a VM with the new snapshot as a drive, do: `./pVM.sh -d Arch_snap`
