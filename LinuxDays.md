@@ -48,6 +48,8 @@ Download the latest (October 2018) Arch Linux installation media:
 ```sh
 aria2c -d images --seed-time=0 "magnet:?xt=urn:btih:b674f2afa42d2b72b5d5dbb6965d23edaebb2364&dn=archlinux-2018.10.01-x86_64.iso&tr=udp://tracker.archlinux.org:6969&tr=http://tracker.archlinux.org:6969/announce"
 ```
+* Ignore the initial message `[NOTICE] Download complete` - it just says that the metadata is finished downloading.
+
 ### Let's go!!!
 
 Let's stay in the same directory we `cd`ed to at the **Download** step.
