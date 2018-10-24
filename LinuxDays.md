@@ -89,7 +89,10 @@ Let's stay in the same directory we `cd`ed to at the **Download** step.
     ```sh
     ./pVM.sh -d Arch_fresh
     ```
-1. Now you can connect as *pvm-user* via SSH (the connection command will be shown)
+1. Now you can connect as *pvm-user* via SSH (the exact connection command will be shown)
+    ```sh
+    ssh -p 22222 pvm-user@localhost
+    ```
 1. Now you have a very minimal system. So you can run the post-installation script, which will install some extra packages (for example some Python packages for data processing) and make your vi editor very beautiful:
     ```sh
     vm_post_setup
