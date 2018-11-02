@@ -34,6 +34,19 @@ libspice-protocol-dev libcap-dev libattr1-dev git aria2
 
 (On other distributions the command will be different)
 
+#### Prepare your computer
+
+1. Add a group named **kvm** if it does not exist already:
+    ```sh
+    grep -q "^kvm:" /etc/group || sudo groupadd kvm
+    ```
+1. Add yourself to the **kvm** group (you may need to log out and log back in for it to take effect):
+    ```sh
+    sudo usermod -a -G kvm $(whoami)
+    ```
+
+* If you will encounter error messages regarding KVM later on, please make sure that virtualization support is enabled in your computer's firmware (BIOS/UEFI).
+
 #### Download
 
 Clone this repository:
